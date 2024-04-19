@@ -28,3 +28,5 @@
 	student s2;
 	// 反序列化
 	wstd::deserialize(s2, nlohmann::json::parse(str));
+# 特别感谢
+swirl_serialize（https://github.com/Humorly/swirl_serialize）
