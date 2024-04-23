@@ -1,4 +1,4 @@
-# select_serialization
+# swirl_serialize
 # 构建流程
 	cmake .
 	cmake --build . --parallel
@@ -28,5 +28,3 @@
 	student s2;
 	// 反序列化
 	wstd::deserialize(s2, nlohmann::json::parse(str));
-# 特别感谢
-陈 A Z（https://github.com/Humorly/swirl_serialize ）

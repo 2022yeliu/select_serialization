@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
     std::string dest_path = "data_judge.h";
 #endif
 
-    // 生成接口
-    wstd::swirl_serialize(source_path, dest_path);
+    // 锟斤拷锟缴接匡拷
+    wstd::swirl_compare(source_path, dest_path);
 
     return 0;
 }

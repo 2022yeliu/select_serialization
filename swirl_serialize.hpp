@@ -14,7 +14,7 @@ namespace wstd
         array_seq_count = 4,
     };
 
-    // ¶ÁÈëÎÄ¼þÄÚÈÝ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
     bool read_file(std::string path, std::string& content)
     {
         std::ifstream file(path);
@@ -24,18 +24,18 @@ namespace wstd
         return true;
     }
 
-    // Ð´ÈëÎÄ¼þ
+    // Ð´ï¿½ï¿½ï¿½Ä¼ï¿½
     bool write_file(std::string path, std::string& content)
     {
-        // truncÐ´Èë
+        // truncÐ´ï¿½ï¿½
         std::ofstream file(path, std::ofstream::trunc);
         file << content;
         file.close();
         return true;
     }
 
-    // Éú³ÉÐòÁÐ»¯ÎÄ¼þ
-    void swirl_serialize(std::string source_path, std::string dest_path)
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½Ä¼ï¿½
+    void swirl_compare(std::string source_path, std::string dest_path)
     {
         std::string content;
         read_file(source_path, content);
@@ -44,14 +44,14 @@ namespace wstd
         content = boost::regex_replace(content, boost::regex("\/\/(.*?)\n"), "\n");
 
 
-        // ËÑ¼¯ËùÓÐstructÀàÐÍ
+        // ï¿½Ñ¼ï¿½ï¿½ï¿½ï¿½ï¿½structï¿½ï¿½ï¿½ï¿½
         std::string trains_content = content;
         std::vector<std::string> trains;
         boost::regex type_train_regex("struct ((.|\\r|\\n)*?)\\{((.|\\r|\\n)*?)\\};");
         boost::smatch type_train_match;
         while (boost::regex_search(trains_content, type_train_match, type_train_regex))
         {
-            // »ñÈ¡ÀàÐÍ
+            // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
             std::string train_name = type_train_match[1].str();
             train_name.erase(std::remove(train_name.begin(), train_name.end(), '\n'), train_name.end());
             train_name.erase(std::remove(train_name.begin(), train_name.end(), ' '), train_name.end());
@@ -59,16 +59,16 @@ namespace wstd
             trains_content = type_train_match.suffix();
         }
 
-        // Ìæ»»×ÓÀàÐÍ
+        // ï¿½æ»»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         for (auto& type : trains)
         {
             boost::regex sub_type_regex(type + " (.*?);");
             content = boost::regex_replace(content, sub_type_regex, "subtype " + type + " $1;");
         }
 
-        // ÍêÕûÄÚÈÝ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         std::string full_content;
-        // ¿ªÊ¼ºÏ³ÉÐòÁÐ»¯º¯Êý
+        // ï¿½ï¿½Ê¼ï¿½Ï³ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½
         boost::regex base_regex("struct ((.|\\r|\\n)*?)\\{((.|\\r|\\n)*?)\\};");
         boost::smatch base_match;
         while (boost::regex_search(content, base_match, base_regex))
@@ -79,39 +79,39 @@ namespace wstd
                 continue;
             }
 
-            // ºÏ³Éº¯Êý ¡ª> node_funtion
+            // ï¿½Ï³Éºï¿½ï¿½ï¿½ ï¿½ï¿½> node_funtion
             std::string struct_type_name = base_match[1].str();
             struct_type_name.erase(std::remove(struct_type_name.begin(), struct_type_name.end(), '\n'), struct_type_name.end());
 
-            // ÐòÁÐ»¯
+            // ï¿½ï¿½ï¿½Ð»ï¿½
             std::string node_function_serialize = std::string("\n\tinline bool ") + "compare (" +
                 struct_type_name + std::string(" ____object_hd") + ", nlohmann::json ____object_json "+ std::string(",std::string") + std::string(" ____object_id)") + " \n\t{\n";
 
-            // ÄÚ²¿½Úµã ¡ª> ÆÕÍ¨ÀàÐÍ
+            // ï¿½Ú²ï¿½ï¿½Úµï¿½ ï¿½ï¿½> ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
             std::string node = base_match[3].str();
             boost::smatch node_match;
             boost::regex node_regex("^[\\t|\\s]{1,}[a-zA-Z0-9_]{1,}[\\s]{1,}([a-zA-Z0-9_]{1,})([^\\s]*?);");
             
             while (boost::regex_search(node, node_match, node_regex))
             {
-                // ÌáÈ¡³ÉÔ±
+                // ï¿½ï¿½È¡ï¿½ï¿½Ô±
                 std::string member = node_match[0].str();
 
-                // Êý×éÐòÁÐ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 std::string array_seq = node_match[2].str();
-                // ÒÆ³ý¿Õ¸ñ
+                // ï¿½Æ³ï¿½ï¿½Õ¸ï¿½
                 array_seq.erase(std::remove(array_seq.begin(), array_seq.end(), ' '), array_seq.end());
 
-                // »ñÈ¡ÌáÈ¡µÄÖµ
+                // ï¿½ï¿½È¡ï¿½ï¿½È¡ï¿½ï¿½Öµ
                 //double extracted_value = std::stod(node_match[1].str());
-                //ÌáÈ¡±È½Ï·§Öµ´óÐ¡µÄÖµ
+                //ï¿½ï¿½È¡ï¿½È½Ï·ï¿½Öµï¿½ï¿½Ð¡ï¿½ï¿½Öµ
                 std::string val = node_match[1].str();
-                //ÅÐ¶ÏÊÇ·ñÔÚ·§Öµ·¶Î§ÄÚ
+                //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ú·ï¿½Öµï¿½ï¿½Î§ï¿½ï¿½
                 bool member_value = true;
 
                 if ("" == array_seq)
                 {
-                    //ãÐÖµ´óÐ¡
+                    //ï¿½ï¿½Öµï¿½ï¿½Ð¡
                     std::string max;
                     std::string min;
                     std::string id = "d01040001";
@@ -123,9 +123,9 @@ namespace wstd
                 node = node_match.suffix();
             }
             node_function_serialize += "\t\treturn true;\n";
-            // Êý×é½Úµã´æ´¢ ¡ª> Ç¶Ì×½á¹¹Ìå
+            // ï¿½ï¿½ï¿½ï¿½Úµï¿½æ´¢ ï¿½ï¿½> Ç¶ï¿½×½á¹¹ï¿½ï¿½
             std::map<std::string, std::string> struct_array_code_mapper;
-            // ÄÚ²¿½Úµã ¡ª> Ç¶Ì×½á¹¹
+            // ï¿½Ú²ï¿½ï¿½Úµï¿½ ï¿½ï¿½> Ç¶ï¿½×½á¹¹
             boost::regex struct_regex("[a-zA-Z0-9_]{1,} ([a-zA-Z0-9_]{1,}) ([a-zA-Z0-9_]{1,})(.*?);");
             node = base_match[3].str();
 
@@ -133,20 +133,20 @@ namespace wstd
             while (boost::regex_search(node, node_match, struct_regex))
             {
                 std::string type = node_match[1].str();
-                // Êý×éÐòÁÐ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 std::string array_seq = node_match[3].str();
-                // ÒÆ³ý¿Õ¸ñ
+                // ï¿½Æ³ï¿½ï¿½Õ¸ï¿½
                 array_seq.erase(std::remove(array_seq.begin(), array_seq.end(), ' '), array_seq.end());
                 if ("" == array_seq)
                 {
-                    // ÐòÁÐ»¯
+                    // ï¿½ï¿½ï¿½Ð»ï¿½
                     //node_function_serialize += "\t\tcompare(____object_hd." + node_match[2].str()
                     //    + "," + " ____object_json[\"" + node_match[2].str() + "\"]" + "); \n";
                     node = node_match.suffix();
                     continue;
                 }
 
-                // Î¬¶È½âÎö
+                // Î¬ï¿½È½ï¿½ï¿½ï¿½
                 boost::regex array_seq_index[array_seq_count] = {
                     boost::regex("\\[(.*?)\\]"),
                     boost::regex("\\[(.*?)\\]\\[(.*?)\\]"),
@@ -321,7 +321,7 @@ namespace wstd
 \t\t}\n",
                     };
 
-                    // ·´ÐòÁÐ»¯
+                    // ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½
                     array_node = array_loop_head_des[i];
                     array_node = boost::regex_replace(array_node, boost::regex("__node_name_index"), node_match[2].str());
                     real_array_node = array_node;
@@ -330,7 +330,7 @@ namespace wstd
                 node = node_match.suffix();
             }
 
-            // Ìí¼ÓÊý×é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             for (auto val : struct_array_code_mapper)
             {
                 node_function_serialize += "\n" + val.second;
@@ -344,15 +344,15 @@ namespace wstd
             content = base_match.suffix();
         }
 
-        // ¹¹ÔìÍêÕûÄÚÈÝ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         std::filesystem::path file_path = source_path;
         std::string file_name = file_path.filename().string();
 
-        full_content = "#include \"" + file_name + "\"\n" + std::string("namespace wstd { namespace data_serialize { \n") + full_content;
+        full_content = "#include \"" + file_name + "\"\n" + std::string("namespace wstd { namespace data_compare { \n") + full_content;
         full_content += "} }";
         full_content = "#pragma once\n" + std::string("#include \"json.hpp\"\n") + std::string("#include <string>\n") + full_content;
 
-        // ÒÆ³ýsubtype
+        // ï¿½Æ³ï¿½subtype
         full_content = boost::regex_replace(full_content, boost::regex("subtype "), "");
         write_file(dest_path, full_content);
     }
